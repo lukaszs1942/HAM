@@ -1,80 +1,90 @@
-# Plan pasm HF — Polska
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Plan pasm HF — Polska</title>
+    <style>
+      :root{--bg:#0b1020;--panel:#121a2d;--panel-2:#1d2943;--text:#eaf2ff;--muted:#a9bbd6;--accent:#6dd3ff;--border:rgba(255,255,255,0.12)}
+      *{box-sizing:border-box}
+      body{margin:0;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(180deg,var(--bg) 0%,#111827 100%);color:var(--text);line-height:1.6}
+      header{background:rgba(17,24,39,0.9);border-bottom:1px solid var(--border);position:sticky;top:0;backdrop-filter:blur(8px);z-index:10}
+      nav{max-width:1100px;margin:0 auto;padding:1rem 1.25rem;display:flex;justify-content:space-between;align-items:center;gap:1rem}
+      .brand{font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+      .nav-links{display:flex;gap:1rem;flex-wrap:wrap}
+      .nav-links a{color:var(--muted);text-decoration:none;font-size:.95rem}
+      .nav-links a:hover{color:var(--text)}
+      main{max-width:1100px;margin:0 auto;padding:2rem 1.25rem 4rem}
+      .card{background:linear-gradient(180deg,var(--panel) 0%,var(--panel-2) 100%);border:1px solid var(--border);border-radius:14px;padding:1.4rem}
+      h1{font-size:clamp(1.6rem,4vw,2.4rem);margin:0 0 .5rem}
+      table{width:100%;border-collapse:collapse;color:var(--muted);margin-top:.6rem}
+      th,td{padding:.6rem 8px;text-align:left;border-bottom:1px solid rgba(255,255,255,0.04)}
+      .note{color:var(--muted)}
+      footer{max-width:1100px;margin:0 auto;padding:2rem 1.25rem 3rem;color:var(--muted);border-top:1px solid var(--border)}
+      a{color:var(--accent)}
+    </style>
+  </head>
+  <body>
+    <header>
+      <nav>
+        <div class="brand">HAM Knowledge</div>
+        <div class="nav-links">
+          <a href="/index.html">Home</a>
+          <a href="/docs/propagation.html">Propagacja</a>
+          <a href="/docs/KF/zakladki.html">KF zakładki</a>
+          <a href="/docs/KF/band-plan-poland-hf.html" aria-current="page">Plan HF (PL)</a>
+        </div>
+      </nav>
+    </header>
 
-Poniżej znajdziesz podstawowy, przydatny przegląd pasm HF i typowych przydziałów używanych przez krótkofalowców w Polsce. To ogólny zarys — zawsze sprawdzaj oficjalne dokumenty i lokalne plany pasm (UKE / IARU region 1) przed aktywnością.
+    <main>
+      <section class="card">
+        <h1>Plan pasm HF — Polska (orientacyjnie)</h1>
+        <p class="note">To ogólny przegląd — przed pracą sprawdź oficjalne dokumenty UKE i plan IARU Region 1.</p>
 
-Typowe przydziały HF (orientacyjnie):
+        <table>
+          <thead>
+            <tr><th>Pasmo</th><th>Typowy przydział (orientacyjnie)</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>160 m</td><td>1.800 – 2.000 kHz</td></tr>
+            <tr><td>80 m</td><td>3.500 – 3.800 kHz</td></tr>
+            <tr><td>60 m</td><td>kanały (sprawdź lokalne regulacje, np. 5351.5–5366.5 kHz)</td></tr>
+            <tr><td>40 m</td><td>7.000 – 7.200 kHz</td></tr>
+            <tr><td>30 m</td><td>10.100 – 10.150 kHz (głównie CW/data)</td></tr>
+            <tr><td>20 m</td><td>14.000 – 14.350 kHz</td></tr>
+            <tr><td>17 m</td><td>18.068 – 18.168 kHz</td></tr>
+            <tr><td>15 m</td><td>21.000 – 21.450 kHz</td></tr>
+            <tr><td>12 m</td><td>24.890 – 24.990 kHz</td></tr>
+            <tr><td>10 m</td><td>28.000 – 29.700 kHz</td></tr>
+          </tbody>
+        </table>
 
-- 160 m (1,800 – 2,000 kHz)
-- 80 m  (3,500 – 3,800 kHz)
-- 60 m  (kanały, zależnie od regulacji; często 5351.5–5366.5 kHz w krajach CEPT — sprawdź aktualnie obowiązujące zasady dla Polski)
-- 40 m  (7,000 – 7,200 kHz)
-- 30 m  (10,100 – 10,150 kHz) — głównie CW/data
-- 20 m  (14,000 – 14,350 kHz)
-- 17 m  (18,068 – 18,168 kHz)
-- 15 m  (21,000 – 21,450 kHz)
-- 12 m  (24,890 – 24,990 kHz)
-- 10 m  (28,000 – 29,700 kHz)
+        <h2>Typowe częstotliwości dla emisji cyfrowych</h2>
+        <ul>
+          <li>FT8 (często): 160m ~1.838 MHz, 80m 3.573 MHz, 40m 7.074 MHz, 30m 10.136 MHz, 20m 14.074 MHz, 15m 21.074 MHz, 12m 24.914 MHz, 10m 28.074 MHz.</li>
+        </ul>
 
-Uwaga:
-- Niektóre pasma mają wewnętrzne zalecane podpasma dla CW, SSB, emisji cyfrowych i emisji szerokopasmowych — szczególnie warto kierować się lokalnym planem IARU Region 1 i krajowymi zaleceniami.
-- 60 m jest przydzielone oddzielnymi kanałami w wielu krajach; jeśli planujesz pracę na 60 m sprawdź dozwolone częstotliwości i moc nadawczą w Polsce.
+        <h2>Kolory w WSJT‑X — propozycja ustawień</h2>
+        <p class="note">WSJT‑X pozwala konfigurować kolory w Settings → Colors. Poniżej propozycja ułatwiająca szybką orientację.</p>
+        <ul>
+          <li><strong>Zielony</strong> — wiadomości zawierające Twój znak (najważniejsze).</li>
+          <li><strong>Pomarańczowy / Żółty</strong> — CQ i wezwania ogólne.</li>
+          <li><strong>Jasnoniebieski</strong> — odpowiedzi do innych stacji.</li>
+          <li><strong>Fioletowy</strong> — nowe DXCC / interesujące spoty.</li>
+          <li><strong>Szary / przygaszony</strong> — bardzo słabe sygnały.</li>
+        </ul>
 
-Zalecane podczęstotliwości dla emisji cyfrowych (często używane przez społeczność, przydatne do szybkiego ustawienia WSJT‑X / JTDX) — sprawdź lokalne reguły i listy „standard frequencies”:
+        <h2>Uwagi</h2>
+        <ul>
+          <li>Zawsze posłuchaj pasmo przed nadawaniem i stosuj lokalne reguły.</li>
+          <li>60 m: sprawdź aktualne lokalne zasady dla Polski.</li>
+        </ul>
+      </section>
+    </main>
 
-- FT8 (przykładowe, typowe):
-  - 160 m: około 1.838 MHz
-  - 80 m: 3.573 MHz
-  - 40 m: 7.074 MHz
-  - 30 m: 10.136 MHz
-  - 20 m: 14.074 MHz
-  - 17 m: 18.100–18.104 MHz (różne congregation)
-  - 15 m: 21.074 MHz
-  - 12 m: 24.914 MHz
-  - 10 m: 28.074 MHz
-
-Te częstotliwości są powszechnie używane jako „center” dla FT8/FT4 i ułatwiają znalezienie spotów i kontaktów — zawsze jednak najpierw nasłuchuj i dostosuj się do lokalnego ruchu.
-
-Przydatne przypomnienia dotyczące etykiety pasma:
-- Zanim nadajesz, posłuchaj — upewnij się, że nie zakłócasz już trwających łączności.
-- Trzymaj się lokalnych zaleceń co do pod-pasm dla emisji cyfrowych i CW.
-- Dostosuj moc i antenę do warunków; przestrzegaj zasad bezpieczeństwa i sąsiedztwa RF.
-
----
-
-# Kolory w WSJT‑X (opis + wskazówki)
-
-WSJT‑X wyświetla dekodowane sygnały i aktywność na pasmach w panelu dekodów oraz w mapie pasma. Kolory są w dużej mierze konfigurowalne w ustawieniach programu (Settings → Colors). Poniżej opisuję jak sprawdzić/zmienić kolory oraz podaję proponowaną, czytelną legendę, którą możesz przyjąć jako domyślną.
-
-Jak zobaczyć i zmienić kolory:
-- Otwórz WSJT‑X → File → Settings → Colors (w polskiej wersji: Plik → Ustawienia → Kolory).
-- W tym panelu możesz przypisać kolory do różnych rodzajów dekodów/wiadomości (np. CQ, wezwania do Ciebie, odpowiedzi, wezwania ogólne, itp.).
-- Zapisz ustawienia i obserwuj, jak zmienia się tabela dekodów.
-
-Proponowana czytelna legenda kolorów (sugestia)
-- Tło / standardowy tekst: jasnoszary / biały — domyślny odczyt
-- Zielony: wiadomości zawierające Twój znak (ważne — natychmiast widoczne)
-- Żółty / Pomarańczowy: CQ lub wezwania ogólne (łatwe do zauważenia, ale nie krytyczne)
-- Niebieski: odpowiedzi do innych stacji (informacyjne)
-- Purpurowy / Fioletowy: spoty DX lub nowe kraje (do odróżnienia)
-- Szary / przygaszony: bardzo słabe sygnały lub nieistotne
-
-Dlaczego warto ustawić kolory ręcznie:
-- Standardowe schematy mogą być mniej wygodne przy różnych motywach kolorystycznych (ciemny motyw/ciemne tło).
-- Wyraźne kolory dla „Twój znak” i „CQ” pomagają szybciej reagować.
-- Dostosowanie kolorów do własnych nawyków przyspiesza pracę na pasmie.
-
-Przykład ustawień (praktyczne):
-- „My callsign” → jasne zielone (łatwe do zauważenia)
-- „CQ” → pomarańczowe
-- „Response to others” → jasnoniebieskie
-- „New DXCC” → fioletowe lub jasnożółte
-
-Źródła i dokumentacja:
-- WSJT‑X manual / Help (w programie) — opis szczegółowy ustawień i kolorów
-- Forum i grupy użytkowników, gdzie dzielą się „schematami kolorów” przydatnymi w różnych motywach
-
----
-
-Chcesz, żebym:
-- Dodał ten plik do repozytorium jako `docs/KF/band-plan-poland-hf.md` teraz? (tak/nie)
-- Czy przygotować też wersję angielską (`docs/KF/band-plan-poland-hf.en.md`)?
+    <footer>
+      HAM Knowledge — plan pasm i wskazówki.
+    </footer>
+  </body>
+</html>
