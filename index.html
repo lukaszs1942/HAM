@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HAM Knowledge</title>
+    <style>
+      :root {
+        --bg: #0b1020;
+        --panel: #121a2d;
+        --panel-2: #1d2943;
+        --text: #eaf2ff;
+        --muted: #a9bbd6;
+        --accent: #6dd3ff;
+        --accent-2: #8cffb2;
+        --warning: #ffd166;
+        --border: rgba(255, 255, 255, 0.12);
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background: linear-gradient(180deg, #0b1020 0%, #111827 100%);
+        color: var(--text);
+        line-height: 1.6;
+      }
+
+      header {
+        background: rgba(17, 24, 39, 0.9);
+        border-bottom: 1px solid var(--border);
+        position: sticky;
+        top: 0;
+        backdrop-filter: blur(8px);
+        z-index: 10;
+      }
+
+      nav {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 1rem 1.25rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .brand {
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+
+      .nav-links a {
+        color: var(--muted);
+        text-decoration: none;
+        font-size: 0.95rem;
+      }
+
+      .nav-links a:hover {
+        color: var(--text);
+      }
+
+      main {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 2rem 1.25rem 4rem;
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: 1.3fr 0.7fr;
+        gap: 2rem;
+        align-items: center;
+        padding: 2rem 0 3rem;
+      }
+
+      .hero h1 {
+        font-size: clamp(2.2rem, 5vw, 4rem);
+        line-height: 1.1;
+        margin: 0 0 1rem;
+      }
+
+      .hero p {
+        font-size: 1.05rem;
+        color: var(--muted);
+        margin: 0 0 1.5rem;
+      }
+
+      .cta-row {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+
+      .button {
+        display: inline-block;
+        padding: 0.9rem 1.2rem;
+        border-radius: 999px;
+        text-decoration: none;
+        font-weight: 700;
+        border: 1px solid transparent;
+      }
+
+      .button.primary {
+        background: linear-gradient(135deg, var(--accent), var(--accent-2));
+        color: #04111a;
+      }
+
+      .button.secondary {
+        border-color: var(--border);
+        color: var(--text);
+        background: rgba(255,255,255,0.02);
+      }
+
+      .card {
+        background: linear-gradient(180deg, var(--panel) 0%, var(--panel-2) 100%);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 1.4rem;
+        box-shadow: 0 18px 40px rgba(0,0,0,0.2);
+      }
+
+      .mini-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1rem;
+      }
+
+      .mini-stat {
+        background: rgba(255,255,255,0.02);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 1rem;
+      }
+
+      .mini-stat strong {
+        display: block;
+        font-size: 1.5rem;
+        margin-bottom: 0.2rem;
+      }
+
+      section {
+        padding-top: 2rem;
+      }
+
+      h2 {
+        font-size: clamp(1.5rem, 2vw, 2.2rem);
+        margin-bottom: 1rem;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1.2rem;
+      }
+
+      .topic {
+        padding: 1.2rem;
+      }
+
+      .topic h3 {
+        margin-top: 0;
+        margin-bottom: 0.5rem;
+      }
+
+      .topic ul {
+        margin: 0;
+        padding-left: 1.1rem;
+        color: var(--muted);
+      }
+
+      .checklist {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.2rem;
+      }
+
+      .info-block {
+        padding: 1.2rem;
+      }
+
+      .info-block ul {
+        margin: 0.6rem 0 0;
+        padding-left: 1.2rem;
+        color: var(--muted);
+      }
+
+      footer {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 2rem 1.25rem 3rem;
+        color: var(--muted);
+        border-top: 1px solid var(--border);
+      }
+
+      @media (max-width: 760px) {
+        .hero, .grid, .checklist {
+          grid-template-columns: 1fr;
+        }
+
+        .mini-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <nav>
+        <div class="brand">HAM Knowledge</div>
+        <div class="nav-links">
+          <a href="#overview">Overview</a>
+          <a href="#topics">Topics</a>
+          <a href="#study-plan">Study Plan</a>
+          <a href="#resources">Resources</a>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero" id="overview">
+        <div>
+          <h1>Build practical HAM knowledge in a simple structure.</h1>
+          <p>
+            This project organizes key radio and amateur communications knowledge into clear sections
+            so it is easier to study, learn, and revisit important topics over time.
+          </p>
+          <div class="cta-row">
+            <a class="button primary" href="#topics">Explore topics</a>
+            <a class="button secondary" href="#study-plan">View study plan</a>
+          </div>
+        </div>
+
+        <div class="card mini-grid">
+          <div class="mini-stat">
+            <strong>VHF</strong>
+            30-300 MHz
+          </div>
+          <div class="mini-stat">
+            <strong>UHF</strong>
+            300 MHz+
+          </div>
+          <div class="mini-stat">
+            <strong>HF</strong>
+            3-30 MHz
+          </div>
+          <div class="mini-stat">
+            <strong>DX</strong>
+            Long distance
+          </div>
+        </div>
+      </section>
+
+      <section id="topics">
+        <h2>Core HAM topics</h2>
+        <div class="grid">
+          <article class="card topic">
+            <h3>Fundamentals</h3>
+            <ul>
+              <li>Radio spectrum basics</li>
+              <li>Frequency and wavelength</li>
+              <li>Propagation basics</li>
+              <li>Signal quality</li>
+            </ul>
+          </article>
+
+          <article class="card topic">
+            <h3>Equipment</h3>
+            <ul>
+              <li>Transceivers</li>
+              <li>Antennas</li>
+              <li>Feedlines</li>
+              <li>Power and grounding</li>
+            </ul>
+          </article>
+
+          <article class="card topic">
+            <h3>Modes</h3>
+            <ul>
+              <li>FM, SSB, CW</li>
+              <li>Digital modes</li>
+              <li>Repeaters</li>
+              <li>Operating etiquette</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section id="study-plan">
+        <h2>Simple study plan</h2>
+        <div class="checklist">
+          <div class="card info-block">
+            <h3>Beginner</h3>
+            <ul>
+              <li>Learn the radio spectrum</li>
+              <li>Understand frequency bands</li>
+              <li>Study simple antenna concepts</li>
+              <li>Practice listening before transmitting</li>
+            </ul>
+          </div>
+
+          <div class="card info-block">
+            <h3>Intermediate</h3>
+            <ul>
+              <li>Learn propagation and weather effects</li>
+              <li>Understand repeaters and local nets</li>
+              <li>Practice call signs and procedures</li>
+              <li>Experiment with simple station setup</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="resources">
+        <h2>Useful reference areas</h2>
+        <div class="card info-block">
+          <ul>
+            <li>Band plans and licensing basics</li>
+            <li>Common radio terms and abbreviations</li>
+            <li>Safety rules and antenna placement</li>
+            <li>Practice logs and operating notes</li>
+          </ul>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      HAM Knowledge — a simple structure for learning amateur radio.
+    </footer>
+  </body>
+</html>
