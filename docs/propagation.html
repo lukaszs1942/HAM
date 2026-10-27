@@ -4,26 +4,15 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Propagacja — HAM Knowledge</title>
+    <link rel="stylesheet" href="../style.css" />
     <style>
-      :root{--bg:#0b1020;--panel:#121a2d;--panel-2:#1d2943;--text:#eaf2ff;--muted:#a9bbd6;--accent:#6dd3ff;--accent-2:#8cffb2;--border:rgba(255,255,255,0.12)}
-      *{box-sizing:border-box}
-      body{margin:0;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(180deg,var(--bg) 0%,#111827 100%);color:var(--text);line-height:1.6}
-      header{background:rgba(17,24,39,0.9);border-bottom:1px solid var(--border);position:sticky;top:0;backdrop-filter:blur(8px);z-index:10}
-      nav{max-width:1100px;margin:0 auto;padding:1rem 1.25rem;display:flex;justify-content:space-between;align-items:center;gap:1rem}
-      .brand{font-weight:700;letter-spacing:.06em;text-transform:uppercase}
-      .nav-links{display:flex;gap:1rem;flex-wrap:wrap}
-      .nav-links a{color:var(--muted);text-decoration:none;font-size:.95rem}
-      .nav-links a:hover{color:var(--text)}
-      main{max-width:1100px;margin:0 auto;padding:2rem 1.25rem 4rem}
-      .card{background:linear-gradient(180deg,var(--panel) 0%,var(--panel-2) 100%);border:1px solid var(--border);border-radius:14px;padding:1.4rem}
       h1{font-size:clamp(1.6rem,4vw,2.4rem);margin:0 0 .5rem}
       h2{font-size:clamp(1.2rem,2.2vw,1.6rem);margin:0 0 .75rem}
       p,li{color:var(--muted)}
       ul{padding-left:1.1rem}
       .two-col{display:grid;grid-template-columns:1fr 320px;gap:1rem;align-items:start}
       .box{padding:1rem;border-radius:10px;background:rgba(255,255,255,0.02);border:1px solid var(--border)}
-      footer{max-width:1100px;margin:0 auto;padding:2rem 1.25rem 3rem;color:var(--muted);border-top:1px solid var(--border)}
-      a{color:var(--accent)}
+      .tip{margin-top:1rem;font-size:.9rem;color:var(--muted)}
       @media (max-width:900px){.two-col{grid-template-columns:1fr}}
     </style>
   </head>
@@ -32,7 +21,7 @@
       <nav>
         <div class="brand">HAM Knowledge</div>
         <div class="nav-links">
-          <a href="../index.html">Home</a>
+          <a href="../index.html">Start</a>
           <a href="propagation.html" aria-current="page">Propagacja</a>
           <a href="KF/zakladki.html">KF zakładki</a>
           <a href="KF/band-plan-poland-hf.html">Plan HF (PL)</a>
@@ -62,13 +51,13 @@
             <ul>
               <li>Zazwyczaj linia widzenia; wysokość anteny i teren decydują o zasięgu.</li>
               <li><strong>Ducting troposferyczny:</strong> inwersje temperatury i warstwy atmosferyczne mogą przenosić sygnały daleko.</li>
-              <li><strong>Sporadic‑E:</strong> krótkotrwałe patch'e jonizacji w warstwie E mogą odbijać VHF (szczególnie 6m) na setki–tysiące km.</li>
+              <li><strong>Sporadic‑E:</strong> krótkotrwałe obłoki silnej jonizacji w warstwie E mogą odbijać VHF (szczególnie 6m) na setki–tysiące km.</li>
             </ul>
 
             <h2 id="groundwave">Groundwave i NVIS</h2>
             <ul>
               <li><strong>Groundwave:</strong> niskie częstotliwości mogą podążać za krzywizną Ziemi — zależy od przewodności gruntu.</li>
-              <li><strong>NVIS:</strong> wysoka kątowość promieniowania HF dla niezawodnej łączności regionalnej (0–400 km); stosować niskie anteny i niższe częstotliwości HF.</li>
+              <li><strong>NVIS:</strong> promieniowanie HF pod dużym kątem (niemal pionowo) dla niezawodnej łączności regionalnej (0–400 km); stosować niskie anteny i niższe częstotliwości HF.</li>
             </ul>
 
             <h2 id="factors">Czynniki wpływające</h2>
@@ -107,7 +96,7 @@
               <li>W dzień HF: 20m i 15m częściej otwarte.</li>
               <li>Lato: więcej Sporadic‑E na VHF (otwarcia 6m/2m możliwe).</li>
             </ul>
-            <div style="margin-top:1rem;font-size:.9rem;color:var(--muted)">Wskazówka: porównaj dane z PSKReporter i DX cluster z prognozą VOACAP przy planowaniu częstotliwości.</div>
+            <div class="tip">Wskazówka: porównaj dane z PSKReporter i DX cluster z prognozą VOACAP przy planowaniu częstotliwości.</div>
           </aside>
         </div>
       </section>
