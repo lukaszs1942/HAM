@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Morse Trainer — HAM Knowledge</title>
+    <link rel="stylesheet" href="../style.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" />
+    <style>
+/* Trainer tokens mapped onto the site's dark palette (style.css). */
+:root{
+  --surface:var(--panel); --ink:var(--text); --line:rgba(255,255,255,0.12);
+  --accent-ink:#04111a; --good:var(--accent-2); --good-bg:#173523;
+  --bad:#ff8176; --bad-bg:#3b201d; --soft:var(--panel-2);
+  --display:Arial,Helvetica,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+  color-scheme:dark;
+}
+[hidden]{display:none!important}
+h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance}
+h1{font-size:clamp(1.6rem,4vw,2.4rem);font-weight:800;letter-spacing:-.02em;line-height:1.1}
+h2{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+main p{margin:0}
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:14px 24px;margin-bottom:18px}
+.sub{color:var(--muted);font-family:var(--mono);font-size:12.5px;margin-top:6px}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line)}
+.tabs button{
+  appearance:none;background:none;border:0;border-bottom:3px solid transparent;margin-bottom:-1px;
+  padding:9px 14px;font:600 14px var(--display);color:var(--muted);cursor:pointer;
+}
+.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.app{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;align-items:start}
+@media (min-width:900px){.app{grid-template-columns:minmax(0,1fr) 300px}}
+.panel{background:linear-gradient(180deg,var(--panel) 0%,var(--panel-2) 100%);border:1px solid var(--line);border-radius:14px;padding:20px;min-width:0}
+.block{padding-block:18px;border-top:1px solid var(--line)}
+.block:first-child{border-top:0;padding-top:0}
+.block:last-child{padding-bottom:0}
+.row{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center}
+.row.between{justify-content:space-between}
+.stack{display:flex;flex-direction:column;gap:10px}
+.hint{color:var(--muted);font-size:13px}
+.mono{font-family:var(--mono)}
+
+.btn{
+  appearance:none;border:1px solid var(--line);background:var(--surface);color:var(--ink);
+  font:600 14px var(--display);padding:9px 16px;border-radius:8px;cursor:pointer;
+}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.small{padding:5px 10px;font-size:12.5px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;flex-wrap:wrap}
+.seg button{
+  appearance:none;border:0;background:transparent;color:var(--muted);font:600 13px var(--display);
+  padding:8px 13px;cursor:pointer;border-right:1px solid var(--line)
+}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+select,input[type=text]{
+  font:500 14px var(--mono);color:var(--ink);background:var(--bg);border:1px solid var(--line);
+  border-radius:8px;padding:8px 10px;max-width:100%
+}
+input[type=range]{width:100%;accent-color:var(--accent);margin:4px 0 0}
+label.f{display:block;font-weight:600;font-size:13px}
+.fieldhead{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+output{font-family:var(--mono);font-size:13px;color:var(--muted)}
+
+/* dit / dah glyphs */
+.g{display:inline-flex;gap:3px;align-items:center;height:10px;color:var(--accent)}
+.g i{display:block;height:6px;border-radius:3px;background:currentColor}
+.g i.d{width:6px}.g i.h{width:18px}
+
+.pool{display:flex;flex-wrap:wrap;gap:5px}
+.chip{font:600 14px var(--mono);min-width:28px;text-align:center;padding:3px 6px;border-radius:6px;background:var(--soft)}
+.chip.new{background:var(--accent);color:var(--accent-ink)}
+.newest{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.newest .big{font:800 44px/1 var(--display);min-width:44px}
+
+.progress{height:6px;background:var(--soft);border-radius:3px;overflow:hidden;flex:1 1 160px;min-width:120px}
+.progress div{height:100%;width:0;background:var(--accent)}
+.readout{font-family:var(--mono);font-size:13px;color:var(--muted)}
+textarea{
+  width:100%;min-height:112px;resize:vertical;font:500 20px/1.6 var(--mono);letter-spacing:.12em;
+  text-transform:uppercase;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:12px 14px
+}
+.result{display:flex;flex-direction:column;gap:12px}
+.score{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.score .pct{font:800 40px/1 var(--display)}
+.score .pct.good{color:var(--good)}.score .pct.low{color:var(--bad)}
+.line{font:500 22px/1.8 var(--mono);letter-spacing:.1em;overflow-wrap:anywhere}
+.line .ok{color:var(--ink)}
+.line .bad{color:var(--bad);background:var(--bad-bg);border-radius:3px;padding:0 2px}
+.line .miss{color:var(--bad);border-bottom:2px dotted var(--bad)}
+.line .extra{color:var(--muted);text-decoration:line-through;font-size:.8em}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:12.5px;color:var(--muted)}
+
+.hist{position:relative;display:flex;align-items:flex-end;gap:4px;height:64px;border-bottom:1px solid var(--line)}
+.hist .bar{flex:1 1 0;max-width:26px;background:var(--accent);border-radius:3px 3px 0 0;min-height:2px;opacity:.85}
+.hist .bar.low{background:var(--muted);opacity:.6}
+.hist .mark{position:absolute;left:0;right:0;bottom:90%;border-top:1px dashed var(--muted);opacity:.6;pointer-events:none}
+.trouble{display:flex;flex-wrap:wrap;gap:8px}
+.trouble .t{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:8px;padding:4px 10px;font:600 14px var(--mono)}
+.trouble .t small{font-weight:400;color:var(--muted)}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px}
+.cell{
+  appearance:none;display:flex;flex-direction:column;align-items:flex-start;gap:8px;text-align:left;
+  background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px;color:var(--ink);cursor:pointer;opacity:.55;min-width:0
+}
+.cell.learned{opacity:1;background:var(--surface)}
+.cell:hover{border-color:var(--accent)}
+.cell .c{font:800 26px/1 var(--display)}
+.cell .n{font:400 11px var(--mono);color:var(--muted)}
+
+.keybtn{
+  width:100%;min-height:150px;border-radius:12px;border:2px solid var(--line);background:var(--bg);color:var(--muted);
+  font:700 15px var(--display);letter-spacing:.06em;text-transform:uppercase;cursor:pointer;touch-action:none;user-select:none;-webkit-user-select:none
+}
+.keybtn.down{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.keyout{font:500 22px/1.6 var(--mono);letter-spacing:.12em;min-height:2lh;overflow-wrap:anywhere}
+.keypat{font:500 15px var(--mono);color:var(--accent);min-height:1.6em;letter-spacing:.2em}
+
+.ro{display:grid;grid-template-columns:1fr auto;gap:4px 12px;font-family:var(--mono);font-size:13px}
+.ro span:nth-child(odd){color:var(--muted)}
+@media (prefers-reduced-motion:no-preference){.progress div{transition:width .12s linear}}
+    </style>
+  </head>
+  <body>
+    <header>
+      <nav>
+        <div class="brand">HAM Knowledge</div>
+        <div class="nav-links">
+          <a href="../index.html">Start</a>
+          <a href="propagation.html">Propagacja</a>
+          <a href="KF/zakladki.html">KF zakładki</a>
+          <a href="KF/band-plan-poland-hf.html">Plan HF (PL)</a>
+          <a href="morse-trainer.html" aria-current="page">Trener CW</a>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+  <div class="top">
+    <div>
+      <h1>Morse Trainer</h1>
+      <p class="sub">Koch method · PARIS timing · Farnsworth spacing</p>
+    </div>
+    <div class="tabs" role="tablist" aria-label="Sections">
+      <button role="tab" data-tab="practice" aria-selected="true">Practice</button>
+      <button role="tab" data-tab="chart" aria-selected="false">Chart</button>
+      <button role="tab" data-tab="key" aria-selected="false">Key</button>
+    </div>
+  </div>
+
+  <div class="app">
+    <div>
+      <!-- PRACTICE -->
+      <section id="s-practice" class="panel">
+        <div class="block stack">
+          <h2>Material</h2>
+          <div class="row">
+            <div class="seg" id="modeSeg" role="group" aria-label="Material">
+              <button data-mode="koch" aria-pressed="true">Koch groups</button>
+              <button data-mode="words" aria-pressed="false">Words &amp; Q-codes</button>
+              <button data-mode="calls" aria-pressed="false">Callsigns</button>
+              <button data-mode="custom" aria-pressed="false">Custom</button>
+            </div>
+          </div>
+
+          <div id="kochBox" class="stack">
+            <div class="fieldhead"><label class="f" for="level">Characters learned</label><output id="levelOut"></output></div>
+            <input type="range" id="level" min="2" max="41" step="1" value="5">
+            <div class="pool" id="pool" aria-label="Characters in this drill"></div>
+            <div class="newest" id="newest"></div>
+            <p class="hint">Start at two characters. When you copy 90% or better, add the next one.</p>
+          </div>
+
+          <div id="customBox" class="stack" hidden>
+            <label class="f" for="customText">Text to send</label>
+            <input type="text" id="customText" autocomplete="off" spellcheck="false">
+            <p class="hint">Letters, digits and . , ? / = are sent. Anything else is skipped.</p>
+          </div>
+
+          <div class="row" id="lenRow">
+            <label class="f" for="lenSel" id="lenLabel">Groups</label>
+            <select id="lenSel"><option>5</option><option>10</option><option>15</option><option>20</option><option>30</option></select>
+            <span class="readout" id="drillInfo"></span>
+          </div>
+        </div>
+
+        <div class="block stack">
+          <h2>Listen</h2>
+          <div class="row">
+            <button class="btn primary" id="play">Play</button>
+            <button class="btn" id="newdrill">New drill</button>
+            <div class="progress" aria-hidden="true"><div id="bar"></div></div>
+            <span class="readout" id="prog">Ready</span>
+          </div>
+        </div>
+
+        <div class="block stack">
+          <h2>Copy</h2>
+          <label class="f" for="copy">What did you hear? Separate groups with spaces.</label>
+          <textarea id="copy" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false"></textarea>
+          <div class="row">
+            <button class="btn primary" id="check">Check</button>
+            <button class="btn" id="reveal">Show answer</button>
+            <span class="hint">Ctrl + Enter also checks.</span>
+          </div>
+          <div class="result" id="result" hidden aria-live="polite"></div>
+        </div>
+
+        <div class="block stack">
+          <div class="row between"><h2>Accuracy, last drills</h2><button class="btn small" id="clearStats">Clear history</button></div>
+          <div class="hist" id="hist"></div>
+          <p class="hint" id="histNote">Dashed line marks 90%.</p>
+          <h2>Characters to work on</h2>
+          <div class="trouble" id="trouble"></div>
+        </div>
+      </section>
+
+      <!-- CHART -->
+      <section id="s-chart" class="panel" hidden>
+        <div class="block stack">
+          <div class="row between">
+            <h2>Character chart</h2>
+            <div class="seg" id="orderSeg" role="group" aria-label="Order">
+              <button data-order="koch" aria-pressed="true">Koch order</button>
+              <button data-order="abc" aria-pressed="false">A to Z</button>
+            </div>
+          </div>
+          <p class="hint">Tap a character to hear it at your character speed. Dimmed characters are not in your Koch set yet.</p>
+          <div class="grid" id="grid"></div>
+        </div>
+      </section>
+
+      <!-- KEY -->
+      <section id="s-key" class="panel" hidden>
+        <div class="block stack">
+          <h2>Straight key</h2>
+          <p class="hint">Hold the pad or the space bar. A press shorter than two dits is a dit, longer is a dah. Pause for a letter, pause longer for a word.</p>
+          <div class="fieldhead"><label class="f" for="keyWpm">Key speed</label><output id="keyWpmOut"></output></div>
+          <input type="range" id="keyWpm" min="5" max="25" step="1" value="12">
+          <button class="keybtn" id="keyBtn" aria-label="Straight key. Hold to send.">Hold to send</button>
+          <div class="keypat" id="keyPat" aria-hidden="true"></div>
+          <div class="keyout" id="keyText" aria-live="polite"></div>
+          <div class="row"><button class="btn" id="keyClear">Clear</button><span class="readout" id="keyHint"></span></div>
+        </div>
+      </section>
+    </div>
+
+    <aside class="panel" aria-label="Settings">
+      <div class="block stack">
+        <h2>Speed</h2>
+        <div>
+          <div class="fieldhead"><label class="f" for="cwpm">Character speed</label><output id="cwpmOut"></output></div>
+          <input type="range" id="cwpm" min="10" max="40" step="1" value="20">
+        </div>
+        <div>
+          <div class="fieldhead"><label class="f" for="ewpm">Effective speed</label><output id="ewpmOut"></output></div>
+          <input type="range" id="ewpm" min="5" max="40" step="1" value="12">
+        </div>
+        <p class="hint">Characters keep their sound at the first speed. The gaps between them stretch to reach the second.</p>
+        <div class="ro">
+          <span>Dit</span><span id="tDit"></span>
+          <span>Letter gap</span><span id="tChar"></span>
+          <span>Word gap</span><span id="tWord"></span>
+        </div>
+      </div>
+      <div class="block stack">
+        <h2>Sound</h2>
+        <div>
+          <div class="fieldhead"><label class="f" for="tone">Tone</label><output id="toneOut"></output></div>
+          <input type="range" id="tone" min="400" max="900" step="10" value="600">
+        </div>
+        <div>
+          <div class="fieldhead"><label class="f" for="vol">Volume</label><output id="volOut"></output></div>
+          <input type="range" id="vol" min="0.05" max="1" step="0.05" value="0.7">
+        </div>
+        <div><button class="btn small" id="hearCQ">Hear CQ</button></div>
+      </div>
+    </aside>
+  </div>
+    </main>
+
+    <footer>
+      HAM Knowledge — trener alfabetu Morse'a (CW).
+    </footer>
+
+<script>
+(function(){
+'use strict';
+
+var MORSE={A:'.-',B:'-...',C:'-.-.',D:'-..',E:'.',F:'..-.',G:'--.',H:'....',I:'..',J:'.---',K:'-.-',L:'.-..',M:'--',N:'-.',O:'---',P:'.--.',Q:'--.-',R:'.-.',S:'...',T:'-',U:'..-',V:'...-',W:'.--',X:'-..-',Y:'-.--',Z:'--..',
+'0':'-----','1':'.----','2':'..---','3':'...--','4':'....-','5':'.....','6':'-....','7':'--...','8':'---..','9':'----.',
+'.':'.-.-.-',',':'--..--','?':'..--..','/':'-..-.','=':'-...-'};
+var KOCH='KMURESNAPTLWI.JZ=FOY,VG5/Q92H38B?47C1D60X'.split('');
+function timing(c,s){
+  s=Math.min(s,c);
+  var dit=1.2/c;
+  var ta=(60*c-37.2*s)/(19*s*c);
+  return {dit:dit,charGap:3*ta,wordGap:7*ta};
+}
+function schedule(text,c,s){
+  var T=timing(c,s),ev=[],wordStarts=[],t=0;
+  var words=text.trim().split(/\s+/).filter(Boolean);
+  words.forEach(function(w,wi){
+    wordStarts.push(t);
+    var chars=w.split('').filter(function(ch){return MORSE[ch];});
+    chars.forEach(function(ch,ci){
+      var code=MORSE[ch];
+      for(var k=0;k<code.length;k++){
+        var d=code[k]==='.'?T.dit:3*T.dit;
+        ev.push({t:t,d:d}); t+=d;
+        if(k<code.length-1) t+=T.dit;
+      }
+      if(ci<chars.length-1) t+=T.charGap;
+    });
+    if(wi<words.length-1) t+=T.wordGap;
+  });
+  return {ev:ev,total:t,wordStarts:wordStarts};
+}
+function align(a,b){
+  var n=a.length,m=b.length,i,j,dp=[];
+  for(i=0;i<=n;i++){dp.push(new Array(m+1).fill(0));dp[i][0]=i;}
+  for(j=0;j<=m;j++)dp[0][j]=j;
+  for(i=1;i<=n;i++)for(j=1;j<=m;j++){
+    dp[i][j]=Math.min(dp[i-1][j]+1,dp[i][j-1]+1,dp[i-1][j-1]+(a[i-1]===b[j-1]?0:1));
+  }
+  var ops=[];i=n;j=m;
+  while(i>0||j>0){
+    if(i>0&&j>0&&dp[i][j]===dp[i-1][j-1]+(a[i-1]===b[j-1]?0:1)){
+      ops.push({k:a[i-1]===b[j-1]?'ok':'bad',t:a[i-1],u:b[j-1],ti:i-1});i--;j--;
+    }else if(i>0&&dp[i][j]===dp[i-1][j]+1){
+      ops.push({k:'miss',t:a[i-1],ti:i-1});i--;
+    }else{
+      ops.push({k:'extra',u:b[j-1]});j--;
+    }
+  }
+  return ops.reverse();
+}
+
+var REV={};Object.keys(MORSE).forEach(function(k){REV[MORSE[k]]=k;});
+var WORDS=['CQ','DE','K','AR','BK','73','88','599','RST','QTH','QSL','QRZ','QRM','QRN','QRP','QSB','QSY','QRT','QRV','NAME','RIG','ANT','PWR','WX','HR','UR','ES','FB','TNX','AGN','PSE','OM','YL','GM','GA','GE','GL','CUL','HW','CPY','SIG','TEST','DX','FREQ','SKED','ABT','WID','VY','TU','SRI','NW','CFM','LOC','BAND','DIPOLE','WIRE','CLEAR','SUN','RAIN'];
+var PFX=['SP','SQ','SO','SN','DL','OK','OM','HA','G','M','F','I','EA','PA','ON','OH','SM','LA','OZ','W','K','N','UA','YO','LZ','S5','9A','OE'];
+var LETTERS='ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+var LS='morse-trainer-v1';
+
+var S={mode:'koch',level:5,len:10,cwpm:20,ewpm:12,tone:600,vol:0.7,keyWpm:12,order:'koch',custom:'CQ CQ DE SP1ABC K',hist:[],miss:{},seen:{}};
+try{
+  var raw=localStorage.getItem(LS);
+  if(raw){var o=JSON.parse(raw);Object.keys(S).forEach(function(k){if(o[k]!==undefined)S[k]=o[k];});}
+}catch(e){}
+function clamp(v,a,b){v=Number(v);if(!isFinite(v))return a;return Math.min(b,Math.max(a,v));}
+S.level=clamp(S.level,2,41);S.cwpm=clamp(S.cwpm,10,40);S.ewpm=clamp(S.ewpm,5,S.cwpm);
+S.tone=clamp(S.tone,400,900);S.vol=clamp(S.vol,0.05,1);S.keyWpm=clamp(S.keyWpm,5,25);
+if(!Array.isArray(S.hist))S.hist=[];
+if(!S.miss||typeof S.miss!=='object')S.miss={};
+if(!S.seen||typeof S.seen!=='object')S.seen={};
+function save(){try{localStorage.setItem(LS,JSON.stringify(S));}catch(e){}}
+
+function $(id){return document.getElementById(id);}
+function el(tag,cls,txt){var n=document.createElement(tag);if(cls)n.className=cls;if(txt!=null)n.textContent=txt;return n;}
+function rand(n){return Math.floor(Math.random()*n);}
+function fmt(s){s=Math.max(0,Math.round(s));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');}
+function glyph(code){var s=el('span','g');s.setAttribute('aria-hidden','true');code.split('').forEach(function(e){s.appendChild(el('i',e==='.'?'d':'h'));});return s;}
+
+/* ---------- audio ---------- */
+var ctx=null,master=null,player=null;
+function ensureCtx(){
+  if(!ctx){var AC=window.AudioContext||window.webkitAudioContext;ctx=new AC();master=ctx.createGain();master.connect(ctx.destination);}
+  if(ctx.state==='suspended')ctx.resume();
+  master.gain.value=S.vol;
+  return ctx;
+}
+function stopPlayback(){
+  if(!player)return;
+  var p=player;player=null;
+  cancelAnimationFrame(p.raf);
+  try{p.g.gain.cancelScheduledValues(0);p.g.gain.setValueAtTime(0,ctx.currentTime);p.osc.stop();p.osc.disconnect();p.g.disconnect();}catch(e){}
+}
+function playText(text,opts){
+  opts=opts||{};
+  stopPlayback();
+  var c=ensureCtx();
+  var sch=schedule(text,S.cwpm,S.ewpm);
+  if(!sch.ev.length){if(opts.onEnd)opts.onEnd();return;}
+  var osc=c.createOscillator(),g=c.createGain();
+  osc.type='sine';osc.frequency.value=S.tone;g.gain.value=0;
+  osc.connect(g);g.connect(master);
+  var t0=c.currentTime+(opts.preroll!=null?opts.preroll:0.5),r=0.006;
+  g.gain.setValueAtTime(0,t0);
+  sch.ev.forEach(function(e){
+    var a=t0+e.t,b=a+e.d;
+    g.gain.setValueAtTime(0,a);
+    g.gain.linearRampToValueAtTime(1,a+r);
+    g.gain.setValueAtTime(1,b-r);
+    g.gain.linearRampToValueAtTime(0,b);
+  });
+  osc.start();osc.stop(t0+sch.total+0.3);
+  var p={osc:osc,g:g,raf:0};
+  player=p;
+  (function tick(){
+    if(player!==p)return;
+    var el_=c.currentTime-t0;
+    if(opts.onTick)opts.onTick(Math.max(0,el_),sch);
+    if(el_>=sch.total+0.05){
+      player=null;
+      try{osc.disconnect();g.disconnect();}catch(e){}
+      if(opts.onEnd)opts.onEnd();
+      return;
+    }
+    p.raf=requestAnimationFrame(tick);
+  })();
+}
+
+/* ---------- settings ---------- */
+function refreshTiming(){
+  var T=timing(S.cwpm,S.ewpm);
+  $('cwpmOut').textContent=S.cwpm+' WPM';
+  $('ewpmOut').textContent=S.ewpm+' WPM';
+  $('toneOut').textContent=S.tone+' Hz';
+  $('volOut').textContent=Math.round(S.vol*100)+'%';
+  $('tDit').textContent=Math.round(T.dit*1000)+' ms';
+  $('tChar').textContent=Math.round(T.charGap*1000)+' ms';
+  $('tWord').textContent=Math.round(T.wordGap*1000)+' ms';
+  $('ewpm').max=S.cwpm;
+  refreshInfo();
+}
+$('cwpm').value=S.cwpm;$('ewpm').value=S.ewpm;$('tone').value=S.tone;$('vol').value=S.vol;
+$('cwpm').addEventListener('input',function(){
+  S.cwpm=+this.value;if(S.ewpm>S.cwpm){S.ewpm=S.cwpm;}
+  $('ewpm').value=S.ewpm;refreshTiming();save();
+});
+$('ewpm').addEventListener('input',function(){S.ewpm=Math.min(+this.value,S.cwpm);refreshTiming();save();});
+$('tone').addEventListener('input',function(){S.tone=+this.value;refreshTiming();save();});
+$('vol').addEventListener('input',function(){S.vol=+this.value;if(master)master.gain.value=S.vol;refreshTiming();save();});
+$('hearCQ').addEventListener('click',function(){playText('CQ',{preroll:0.05});});
+
+/* ---------- drills ---------- */
+var drill=null;
+function kochGroup(){
+  var pool=KOCH.slice(0,S.level),newest=pool[pool.length-1],g='';
+  for(var i=0;i<5;i++)g+=(Math.random()<0.25)?newest:pool[rand(pool.length)];
+  return g;
+}
+function callsign(){
+  var c=PFX[rand(PFX.length)]+rand(10),n=1+rand(3);
+  for(var i=0;i<n;i++)c+=LETTERS[rand(26)];
+  return c;
+}
+function buildWords(){
+  var out=[],n=S.len,i;
+  if(S.mode==='koch'){for(i=0;i<n;i++)out.push(kochGroup());}
+  else if(S.mode==='words'){
+    var last='';
+    for(i=0;i<n;i++){var w;do{w=WORDS[rand(WORDS.length)];}while(w===last);out.push(w);last=w;}
+  }
+  else if(S.mode==='calls'){for(i=0;i<n;i++)out.push(callsign());}
+  else{
+    out=S.custom.toUpperCase().split('').filter(function(ch){return MORSE[ch]||ch===' ';}).join('').split(/\s+/).filter(Boolean);
+  }
+  return out;
+}
+function refreshInfo(){
+  if(!drill||!drill.words.length){$('drillInfo').textContent='Nothing to send yet.';return;}
+  var sch=schedule(drill.words.join(' '),S.cwpm,S.ewpm);
+  var unit={koch:'groups',words:'words',calls:'callsigns',custom:'words'}[S.mode];
+  $('drillInfo').textContent=drill.words.length+' '+unit+' · about '+fmt(sch.total);
+}
+function setPlaying(on){
+  $('play').textContent=on?'Stop':(drill&&drill.played?'Replay':'Play');
+}
+function resetProgress(txt){$('bar').style.width='0%';$('prog').textContent=txt||'Ready';}
+function newDrill(){
+  stopPlayback();
+  drill={words:buildWords(),played:false,counted:false};
+  $('copy').value='';
+  $('result').hidden=true;
+  setPlaying(false);resetProgress();refreshInfo();
+}
+$('play').addEventListener('click',function(){
+  if(player){stopPlayback();setPlaying(false);$('prog').textContent='Stopped';return;}
+  if(!drill||!drill.words.length){newDrill();if(!drill.words.length)return;}
+  var text=drill.words.join(' ');
+  drill.played=true;setPlaying(true);
+  playText(text,{
+    onTick:function(e,sch){
+      $('bar').style.width=Math.min(100,e/sch.total*100)+'%';
+      var wi=0;for(var i=0;i<sch.wordStarts.length;i++){if(sch.wordStarts[i]<=e)wi=i;}
+      $('prog').textContent=(e<=0?'Starting':('Item '+(wi+1)+' of '+sch.wordStarts.length))+' · '+fmt(e)+' / '+fmt(sch.total);
+    },
+    onEnd:function(){
+      setPlaying(false);$('bar').style.width='100%';$('prog').textContent='Done · now type what you copied';
+      try{$('copy').focus({preventScroll:true});}catch(e){$('copy').focus();}
+    }
+  });
+});
+$('newdrill').addEventListener('click',newDrill);
+
+function renderPool(){
+  var pool=KOCH.slice(0,S.level),box=$('pool');box.textContent='';
+  pool.forEach(function(ch,i){box.appendChild(el('span','chip'+(i===pool.length-1?' new':''),ch));});
+  var nw=pool[pool.length-1],n=$('newest');n.textContent='';
+  n.appendChild(el('span','big',nw));
+  n.appendChild(glyph(MORSE[nw]));
+  n.appendChild(el('span','hint','Newest in your set'));
+  var b=el('button','btn small','Hear '+nw);b.addEventListener('click',function(){playText(nw+' '+nw+' '+nw,{preroll:0.05});});
+  n.appendChild(b);
+  $('levelOut').textContent=S.level+' of '+KOCH.length;
+}
+$('level').value=S.level;
+$('level').addEventListener('input',function(){S.level=+this.value;renderPool();save();});
+$('level').addEventListener('change',newDrill);
+
+function applyMode(){
+  Array.prototype.forEach.call($('modeSeg').children,function(b){b.setAttribute('aria-pressed',b.dataset.mode===S.mode?'true':'false');});
+  $('kochBox').hidden=S.mode!=='koch';
+  $('customBox').hidden=S.mode!=='custom';
+  $('lenRow').firstElementChild.hidden=false;
+  var isCustom=S.mode==='custom';
+  $('lenLabel').hidden=isCustom;$('lenSel').hidden=isCustom;
+  $('lenLabel').textContent={koch:'Groups of five',words:'Words',calls:'Callsigns',custom:''}[S.mode];
+}
+Array.prototype.forEach.call($('modeSeg').children,function(b){
+  b.addEventListener('click',function(){S.mode=b.dataset.mode;applyMode();save();newDrill();});
+});
+$('lenSel').value=String(S.len);
+$('lenSel').addEventListener('change',function(){S.len=+this.value;save();newDrill();});
+$('customText').value=S.custom;
+$('customText').addEventListener('input',function(){S.custom=this.value;save();newDrill();});
+
+/* ---------- checking ---------- */
+function renderLine(ops,wordStarts){
+  var line=el('div','line');line.setAttribute('aria-label','Your copy compared with what was sent');
+  ops.forEach(function(op){
+    if(op.k!=='extra'&&op.ti>0&&wordStarts[op.ti])line.appendChild(document.createTextNode(' '));
+    if(op.k==='ok')line.appendChild(el('span','ok',op.t));
+    else if(op.k==='bad'){var s=el('span','bad',op.t);s.title='You typed '+op.u;line.appendChild(s);}
+    else if(op.k==='miss')line.appendChild(el('span','miss',op.t));
+    else line.appendChild(el('span','extra',op.u));
+  });
+  return line;
+}
+function doCheck(reveal){
+  if(!drill||!drill.words.length)return;
+  var res=$('result');res.textContent='';res.hidden=false;
+  var tflat=drill.words.join('');
+  var starts={},acc=0;drill.words.forEach(function(w){starts[acc]=true;acc+=w.length;});
+  if(reveal){
+    res.appendChild(el('p','hint','Answer shown. This drill is not scored.'));
+    res.appendChild(el('div','line',drill.words.join(' ')));
+    return;
+  }
+  var typed=$('copy').value.toUpperCase().replace(/\s+/g,'');
+  var ops=align(tflat.split(''),typed.split(''));
+  var ok=ops.filter(function(o){return o.k==='ok';}).length;
+  var pct=Math.round(ok/tflat.length*100);
+  if(!drill.counted){
+    drill.counted=true;
+    ops.forEach(function(o){
+      if(o.k==='extra')return;
+      S.seen[o.t]=(S.seen[o.t]||0)+1;
+      if(o.k!=='ok')S.miss[o.t]=(S.miss[o.t]||0)+1;
+    });
+    S.hist.push({acc:pct,mode:S.mode,level:S.level,c:S.cwpm,e:S.ewpm});
+    if(S.hist.length>40)S.hist=S.hist.slice(-40);
+    save();renderHist();renderTrouble();
+  }
+  var score=el('div','score');
+  score.appendChild(el('span','pct '+(pct>=90?'good':'low'),pct+'%'));
+  score.appendChild(el('span','readout',ok+' of '+tflat.length+' characters correct'));
+  res.appendChild(score);
+  res.appendChild(renderLine(ops,starts));
+  var lg=el('div','legend');
+  lg.appendChild(el('span',null,'Wrong character: shaded'));
+  lg.appendChild(el('span',null,'Missed: dotted underline'));
+  lg.appendChild(el('span',null,'Extra: struck through'));
+  res.appendChild(lg);
+  var next=el('div','row');
+  if(S.mode==='koch'){
+    if(pct>=90&&S.level<KOCH.length){
+      var nc=KOCH[S.level];
+      res.appendChild(el('p',null,'90% or better. Add '+nc+' to your set.'));
+      var add=el('button','btn primary','Add '+nc+' and start next drill');
+      add.addEventListener('click',function(){S.level++;$('level').value=S.level;renderPool();save();newDrill();$('play').focus();});
+      next.appendChild(add);
+    }else if(pct>=90){
+      res.appendChild(el('p',null,'90% or better with every character in the set.'));
+    }else{
+      res.appendChild(el('p',null,'Under 90%. Stay at this level until copy is solid.'));
+    }
+  }
+  var again=el('button','btn','New drill');again.addEventListener('click',function(){newDrill();$('play').focus();});
+  next.appendChild(again);
+  res.appendChild(next);
+}
+$('check').addEventListener('click',function(){doCheck(false);});
+$('reveal').addEventListener('click',function(){doCheck(true);});
+$('copy').addEventListener('keydown',function(e){if(e.key==='Enter'&&(e.ctrlKey||e.metaKey)){e.preventDefault();doCheck(false);}});
+
+/* ---------- history ---------- */
+function renderHist(){
+  var h=$('hist');h.textContent='';
+  var last=S.hist.slice(-14);
+  if(!last.length){h.style.borderBottom='0';h.style.height='auto';h.appendChild(el('p','hint','Accuracy for each checked drill will show here.'));$('histNote').hidden=true;return;}
+  h.style.borderBottom='';h.style.height='';$('histNote').hidden=false;
+  h.appendChild(el('div','mark'));
+  last.forEach(function(r){
+    var b=el('div','bar'+(r.acc<90?' low':''));
+    b.style.height=Math.max(2,r.acc)+'%';
+    b.title=r.acc+'% · '+r.c+'/'+r.e+' WPM';
+    h.appendChild(b);
+  });
+}
+function renderTrouble(){
+  var box=$('trouble');box.textContent='';
+  var list=Object.keys(S.seen).filter(function(k){return S.seen[k]>=4&&(S.miss[k]||0)>0;}).map(function(k){return {ch:k,rate:(S.miss[k]||0)/S.seen[k],n:S.seen[k]};});
+  list.sort(function(a,b){return b.rate-a.rate;});
+  list=list.filter(function(x){return x.rate>=0.2;}).slice(0,8);
+  if(!list.length){box.appendChild(el('p','hint','Copy a few drills and the characters you miss most will show here.'));return;}
+  list.forEach(function(x){
+    var t=el('button','t');t.type='button';
+    t.style.cursor='pointer';t.style.background='var(--surface)';t.style.color='var(--ink)';
+    t.appendChild(el('span',null,x.ch));t.appendChild(glyph(MORSE[x.ch]));
+    t.appendChild(el('small',null,Math.round(x.rate*100)+'% missed'));
+    t.addEventListener('click',function(){playText(x.ch+' '+x.ch+' '+x.ch,{preroll:0.05});});
+    box.appendChild(t);
+  });
+}
+var clearArmed=false;
+$('clearStats').addEventListener('click',function(){
+  if(!clearArmed){clearArmed=true;this.textContent='Click again to clear';var b=this;setTimeout(function(){clearArmed=false;b.textContent='Clear history';},3000);return;}
+  clearArmed=false;this.textContent='Clear history';
+  S.hist=[];S.miss={};S.seen={};save();renderHist();renderTrouble();
+});
+
+/* ---------- chart ---------- */
+function renderChart(){
+  Array.prototype.forEach.call($('orderSeg').children,function(b){b.setAttribute('aria-pressed',b.dataset.order===S.order?'true':'false');});
+  var g=$('grid');g.textContent='';
+  var list=S.order==='koch'?KOCH.slice():Object.keys(MORSE).sort(function(a,b){
+    var la=/[A-Z]/.test(a),lb=/[A-Z]/.test(b);
+    if(la!==lb)return la?-1:1;
+    return a<b?-1:1;
+  });
+  list.forEach(function(ch){
+    var idx=KOCH.indexOf(ch);
+    var b=el('button','cell'+(idx<S.level?' learned':''));b.type='button';
+    b.setAttribute('aria-label',ch+' '+MORSE[ch].replace(/\./g,' dit').replace(/-/g,' dah'));
+    b.appendChild(el('span','c',ch));
+    b.appendChild(glyph(MORSE[ch]));
+    b.appendChild(el('span','n',MORSE[ch]+(S.order==='koch'?'  #'+(idx+1):'')));
+    b.addEventListener('click',function(){playText(ch,{preroll:0.05});});
+    g.appendChild(b);
+  });
+}
+Array.prototype.forEach.call($('orderSeg').children,function(b){
+  b.addEventListener('click',function(){S.order=b.dataset.order;save();renderChart();});
+});
+
+/* ---------- key ---------- */
+var key={down:false,t0:0,pat:'',text:'',timers:[],osc:null,g:null};
+function keyUpdate(){
+  $('keyPat').textContent=key.pat.replace(/\./g,'·').replace(/-/g,'−');
+  $('keyText').textContent=key.text;
+  var dit=Math.round(1200/S.keyWpm);
+  $('keyWpmOut').textContent=S.keyWpm+' WPM';
+  $('keyHint').textContent='Dit about '+dit+' ms · dah over '+(2*dit)+' ms';
+}
+function keyClearTimers(){key.timers.forEach(clearTimeout);key.timers=[];}
+function commitChar(){
+  if(!key.pat)return;
+  key.text+=REV[key.pat]||'#';key.pat='';keyUpdate();
+}
+function keyDown(){
+  if(key.down)return;
+  key.down=true;keyClearTimers();
+  var c=ensureCtx(),now=c.currentTime;
+  key.osc=c.createOscillator();key.g=c.createGain();
+  key.osc.type='sine';key.osc.frequency.value=S.tone;
+  key.g.gain.setValueAtTime(0,now);key.g.gain.linearRampToValueAtTime(1,now+0.006);
+  key.osc.connect(key.g);key.g.connect(master);key.osc.start();
+  key.t0=performance.now();$('keyBtn').classList.add('down');
+}
+function keyUp(){
+  if(!key.down)return;
+  key.down=false;
+  var d=performance.now()-key.t0,dit=1200/S.keyWpm;
+  $('keyBtn').classList.remove('down');
+  try{
+    var now=ctx.currentTime;
+    key.g.gain.cancelScheduledValues(now);key.g.gain.setValueAtTime(key.g.gain.value,now);
+    key.g.gain.linearRampToValueAtTime(0,now+0.006);key.osc.stop(now+0.03);
+  }catch(e){}
+  key.pat+=d<2*dit?'.':'-';
+  keyUpdate();
+  key.timers.push(setTimeout(commitChar,dit*2.4));
+  key.timers.push(setTimeout(function(){commitChar();if(key.text&&!/ $/.test(key.text)){key.text+=' ';keyUpdate();}},dit*5.5));
+}
+var kb=$('keyBtn');
+kb.addEventListener('pointerdown',function(e){e.preventDefault();try{kb.setPointerCapture(e.pointerId);}catch(x){}keyDown();});
+kb.addEventListener('pointerup',keyUp);
+kb.addEventListener('pointercancel',keyUp);
+kb.addEventListener('lostpointercapture',keyUp);
+$('keyWpm').value=S.keyWpm;
+$('keyWpm').addEventListener('input',function(){S.keyWpm=+this.value;keyUpdate();save();});
+$('keyClear').addEventListener('click',function(){keyClearTimers();key.pat='';key.text='';keyUpdate();});
+function typingTarget(t){return t&&(t.tagName==='TEXTAREA'||t.tagName==='INPUT'||t.tagName==='SELECT');}
+document.addEventListener('keydown',function(e){
+  if(S.tab!=='key'||e.code!=='Space'||typingTarget(e.target))return;
+  e.preventDefault();if(!e.repeat)keyDown();
+});
+document.addEventListener('keyup',function(e){
+  if(S.tab!=='key'||e.code!=='Space')return;
+  e.preventDefault();keyUp();
+});
+window.addEventListener('blur',keyUp);
+
+/* ---------- tabs ---------- */
+S.tab='practice';
+Array.prototype.forEach.call(document.querySelectorAll('.tabs button'),function(b){
+  b.addEventListener('click',function(){
+    keyUp();stopPlayback();setPlaying(false);
+    S.tab=b.dataset.tab;
+    Array.prototype.forEach.call(document.querySelectorAll('.tabs button'),function(x){x.setAttribute('aria-selected',x===b?'true':'false');});
+    ['practice','chart','key'].forEach(function(t){$('s-'+t).hidden=t!==S.tab;});
+    if(S.tab==='chart')renderChart();
+    if(S.tab==='key')keyUpdate();
+  });
+});
+
+/* ---------- start ---------- */
+applyMode();renderPool();renderHist();renderTrouble();keyUpdate();
+newDrill();refreshTiming();
+})();
+</script>
+  </body>
+</html>

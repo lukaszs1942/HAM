@@ -15,6 +15,7 @@ This project is intended to present core HAM topics as a readable knowledge base
 - `docs/propagation.html` — radio propagation guide (PL)
 - `docs/KF/zakladki.html` — HF bookmarks: propagation, spots and solar data tools (PL)
 - `docs/KF/band-plan-poland-hf.html` — HF band plan for Poland, FT8 frequencies, WSJT-X colors (PL)
+- `docs/morse-trainer.html` — Morse/CW trainer: Koch drills, character chart, straight key (EN)
 
 ## Open locally
 
